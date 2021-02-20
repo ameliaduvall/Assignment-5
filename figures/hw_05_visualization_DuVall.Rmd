@@ -1,0 +1,74 @@
+---
+title: "FSH 497: Data visualization"
+author: "Amelia J. DuVall"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    number_sections: TRUE
+mainfont: Arial
+documentclass: article
+geometry: margin=1in
+linestretch: 2
+header-includes:
+  - \usepackage{lineno}
+  - \linenumbers
+fontsize: 12pt
+toc: TRUE
+toc-depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+This is version `r paste0('0.', format(Sys.time(), '%y.%m.%d'))`
+
+# Data description
+
+The data come from the [{FSAdata}](https://github.com/droglenc/FSAdata) package, which was created by [Derek Ogle](https://derekogle.com/) as part of his book [*Introductory Fisheries Analysis with R*](http://derekogle.com/IFAR/). The dataset contains information on the ages (subsample), and length and mass (all fish) for male and female Siscowet Lake Trout captured at four locations in Michigan waters of Lake Superior.
+
+## Format
+
+A data frame with 780 observations on the following 8 variables.
+
+1) `locID`: Locations (`Blind Sucker`, `Deer Park`, `Grand Marais`, `Little Lake Harbor`) 
+
+2) `pnldep`: Depth of gillnet panel in which the fish was captured  
+
+3) `mesh`: Gillnet stretch mesh measure  
+
+4) `fishID`: Unique fish identification code  
+
+5) `sex`: Sex (`F` = female; `M` = male)  
+
+6) `age`: Assigned ages (years)  
+
+7) `len`: Total length (mm)  
+
+8) `wgt`: Weight (g)  
+
+***
+
+# Task 1
+
+Create a new repo on **GitHub** called `Assignment-5` and populate it with a short `README.md` document that briefly describes your assignment. 
+
+Your repo should ultimately contain the following structure:
+
+* a folder `data` that includes the `.csv` file for the assignment
+
+* a folder `figures` that should include your `.Rmd` or `.R` files used for creating your figures, and any saved figures you might generate
+
+
+# Task 2
+
+Create a new project in **RStudio** from the repo you created in **Task 1**, and work from there to create and edit your code for cleaning and plotting the data. Make sure to commit any changes and push them up to your remote repo.
+
+# Task 3
+
+When you are finished with your assignment, create a new issue within your `Assignment-5` repo that briefly describes what you've done, and tag Mark in the issue so he knows when you're finished.
+
+
+
