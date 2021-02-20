@@ -2,27 +2,26 @@
 title: "FSH 497: Data visualization"
 author: "Amelia J. DuVall"
 date: "`r format(Sys.time(), '%d %B %Y')`"
-output: 
-  pdf_document:
-    latex_engine: xelatex
-    number_sections: TRUE
-mainfont: Arial
-documentclass: article
-geometry: margin=1in
-linestretch: 2
-header-includes:
-  - \usepackage{lineno}
-  - \linenumbers
-fontsize: 12pt
-toc: TRUE
-toc-depth: 2
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+## load libraries
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(cowplot)
+library(ggridges)
+library(viridis)
+library(patchwork)
+library(gridExtra)
+library(grid)
 ```
 
 <br>
+
 This is version `r paste0('0.', format(Sys.time(), '%y.%m.%d'))`
 
 # Data description
@@ -49,26 +48,77 @@ A data frame with 780 observations on the following 8 variables.
 
 8) `wgt`: Weight (g)  
 
+```{r readin, warning = FALSE, include = FALSE}
+df <- read_csv(here("data", "siscowet.csv"))
+head(df)
+dim(df)
+table(df$locID, useNA = "always")
+table(df$sex, useNA = "always")
+table(df$age, useNA = "always")
+table(df$wgt, useNA = "always")
+```
+
 ***
 
-# Task 1
+# Explanatory figures
+```{r explanatory, warning = FALSE, echo = FALSE}
+hist(df$pnldep)
 
-Create a new repo on **GitHub** called `Assignment-5` and populate it with a short `README.md` document that briefly describes your assignment. 
+hist(df$len)
 
-Your repo should ultimately contain the following structure:
+ggplot(data = df, mapping = aes(x = pnldep, y = len, color = sex)) + 
+  geom_point() +
+  facet_wrap(~locID) 
+```
 
-* a folder `data` that includes the `.csv` file for the assignment
+# Expository figure
+### Number 1
+```{r expository, warning = FALSE, echo = FALSE}
+dfv2 <- df %>%
+  filter(!is.na(sex), 
+         wgt <10000) # outlier?
 
-* a folder `figures` that should include your `.Rmd` or `.R` files used for creating your figures, and any saved figures you might generate
+max(dfv2$wgt, na.rm = TRUE)
+max(dfv2$len, na.rm = TRUE)
 
+ggplot(data = dfv2, mapping = aes(x = len, y = wgt, color = sex)) + 
+  geom_point() +
+  xlab("Total length (mm)") + ylab("Weight (g)") +
+  # geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~locID, nrow = 4) +
+  scale_color_viridis_d(option = "cividis") +
+  theme_minimal() +
+  scale_y_continuous(expand = c(0, 0),
+                     limits=c(0, 5000),
+                     breaks = c(0, 2500, 5000)) +
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 800), 
+                     breaks = c(0, 200, 400, 600, 800)) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  geom_jitter()
+```
 
-# Task 2
-
-Create a new project in **RStudio** from the repo you created in **Task 1**, and work from there to create and edit your code for cleaning and plotting the data. Make sure to commit any changes and push them up to your remote repo.
-
-# Task 3
-
-When you are finished with your assignment, create a new issue within your `Assignment-5` repo that briefly describes what you've done, and tag Mark in the issue so he knows when you're finished.
-
+### Number 2
+```{r ex2, warning = FALSE, echo = FALSE}
+p1 <- ggplot(dfv2) +
+  geom_density_ridges(aes(x = len, y = locID, fill = locID)) +
+  theme_cowplot() + 
+  theme(legend.position = "none") +
+  xlab("Total length (mm)") + ylab("Location") +
+  scale_fill_viridis_d(option = "cividis")
+p2 <- ggplot(dfv2) +
+  geom_density_ridges(aes(x = wgt, y = locID, fill = locID)) +
+  theme_cowplot() + 
+  theme(legend.position = "none") +
+  xlab("Weight(g)") + ylab("Location") +
+  scale_fill_viridis_d(option = "cividis")
+p3 <- ggplot(dfv2) +
+  geom_density_ridges(aes(x = pnldep, y = locID, fill = locID)) +
+  theme_cowplot() + 
+  theme(legend.position = "none") +
+  xlab("Depth of gillnet panel") + ylab("Location") +
+  scale_fill_viridis_d(option = "cividis")
+grid.arrange(p1, p2, p3)
+```
 
 
